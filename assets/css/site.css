@@ -343,7 +343,29 @@ details .ans{padding:0 0 20px;color:var(--ink-2);max-width:62ch}
 .mq span:nth-of-type(even){font-style:italic;color:var(--brass)}
 .mq i{font-style:normal;color:var(--muted);font-size:.9rem;align-self:center}
 @keyframes mq{to{transform:translateX(-50%)}}
-.marquee:hover .mq{animation-play-state:paused}
+@media (hover:hover){.marquee:hover .mq{animation-play-state:paused}}
+/* Reduced motion: the strip can't scroll, so show one copy, wrapped and centered instead of clipped */
+@media (prefers-reduced-motion:reduce){.marquee{white-space:normal}.mq{display:flex;flex-wrap:wrap;justify-content:center;row-gap:.35em;padding:0 var(--gut)}.mq>:nth-child(n+12){display:none}}
 @media (max-width:900px){.panel figcaption .v{display:none}.rail-ctl .track{display:none}.rail-ctl{justify-content:flex-start}.rail-ctl .btn{margin-left:auto}}
 .hero{padding-top:clamp(20px,3.5vw,44px)}
 .h3{font-size:var(--h3);letter-spacing:-.01em;line-height:1.15}
+
+/* Project cards: fourth pillar and the apps-page project row (used by the SHEEN preview) */
+.pillars.four{grid-template-columns:repeat(4,1fr)}
+.pillar .coin-media{background:radial-gradient(70% 60% at 50% 45%,#34463a,#1d2921);display:grid;place-items:center}
+.pillar .coin-media img{width:72%;height:auto;object-fit:contain;filter:drop-shadow(0 26px 30px rgba(0,0,0,.45))}
+.pillar:hover .coin-media img{transform:scale(1.04) rotate(-4deg)}
+@media (max-width:1100px) and (min-width:901px){.pillars.four{grid-template-columns:1fr 1fr;gap:44px 28px}}
+@media (max-width:900px){.pillars.four{grid-template-columns:1fr}}
+.proj{display:grid;grid-template-columns:auto 1fr auto;gap:clamp(20px,3vw,40px);align-items:center;padding:clamp(20px,2.6vw,32px);border:1px solid var(--line);border-radius:calc(var(--r) + 4px);transition:background .4s var(--ease),transform .5s var(--ease)}
+.proj:hover{background:var(--paper-2);transform:translateY(-3px)}
+.proj-art{width:clamp(96px,10vw,150px);aspect-ratio:1;border-radius:var(--r);background:radial-gradient(70% 60% at 50% 45%,#34463a,#1d2921);display:grid;place-items:center}
+.proj-art img{width:80%;filter:drop-shadow(0 12px 14px rgba(0,0,0,.4));transition:transform 1s var(--ease)}
+.proj:hover .proj-art img{transform:rotate(-8deg)}
+.proj p{margin:.5em 0 0;color:var(--muted);max-width:46ch}
+.proj:hover .btn.ghost{--bg:var(--ink);--fg:var(--paper);border-color:var(--ink)}
+@media (max-width:700px){.proj{grid-template-columns:1fr;gap:18px;padding:22px}.proj-art{width:96px}.proj .btn{justify-self:start}}
+
+/* Phone tap targets: bigger hit areas without changing the look */
+.brand{min-height:44px}
+@media (pointer:coarse){.link{position:relative}.link::before{content:"";position:absolute;left:0;right:0;top:-10px;bottom:-10px}}
