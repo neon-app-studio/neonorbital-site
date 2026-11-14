@@ -132,7 +132,20 @@
     box.innerHTML = ''; box.appendChild(f);
   }));
 
-  /* Studio stage: the 3D logo is an animated WebP in a <picture> (no video, no JS needed). */
+  /* Studio stage: the 3D logo is a looping animated WebP (no video, so iPhone Safari always animates it).
+     The still shows first; the animation is swapped in when the stage nears the screen, so it never competes with the first paint.
+     Reduced motion keeps the still (its <source> matches first). */
+  const orbit = d.querySelector('img.orbit-anim');
+  if (orbit) {
+    const swap = () => {
+      if (orbit.dataset.on) return; orbit.dataset.on = 1;
+      orbit.parentNode.querySelectorAll('[data-anim]').forEach(el => { if (el.tagName === 'SOURCE') el.srcset = el.dataset.anim; else el.src = el.dataset.anim; });
+    };
+    if ('IntersectionObserver' in window) {
+      const oio = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { oio.disconnect(); swap(); } }, { rootMargin: '300px 0px' });
+      oio.observe(orbit.closest('.stage-media') || orbit);
+    } else swap();
+  }
 
   /* Shop: show wall art in a room (useful on touch screens, where there is no hover) */
   d.querySelectorAll('[data-rooms]').forEach(b => b.addEventListener('click', () => {
