@@ -2,6 +2,7 @@
 (() => {
   const d = document, root = d.documentElement;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  window.NO_JS_OK = 1; // tells the head failsafe that this script ran
 
   /* Header: solid after scroll, hides on scroll down, returns on scroll up */
   const hdr = d.querySelector('.hdr');
@@ -39,11 +40,16 @@
   });
 
   /* Scroll reveals */
-  const els = d.querySelectorAll('.rv, .rv-img, .split');
+  let els = [...d.querySelectorAll('.rv, .rv-img, .split, .rv-fade')];
   if (reduce || !('IntersectionObserver' in window)) els.forEach(e => e.classList.add('in'));
   else {
+    /* Below the fold, hand reveals to CSS scroll-driven animations where supported (decided from the observer's first report, no forced layout) */
+    const sda = !!(window.CSS && CSS.supports('animation-timeline: view()'));
+    const seen = new WeakSet();
     const io = new IntersectionObserver(es => es.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      const t = e.target, first = !seen.has(t); seen.add(t);
+      if (e.isIntersecting) { t.classList.add('in'); io.unobserve(t); }
+      else if (first && sda && !t.classList.contains('split') && e.boundingClientRect.top > innerHeight) { t.classList.add('sd', 'in'); io.unobserve(t); }
     }), { rootMargin: '0px 0px -8% 0px', threshold: .08 });
     els.forEach(e => io.observe(e));
   }
@@ -124,6 +130,30 @@
     f.src = btn.dataset.embed; f.title = btn.dataset.title || 'Music player';
     f.loading = 'lazy'; f.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
     box.innerHTML = ''; box.appendChild(f);
+  }));
+
+  /* Studio stage: the 3D logo turns only while it is on screen. Reduced motion or Save-Data keeps the still. */
+  const vid = d.querySelector('video.orbit');
+  const saveData = navigator.connection && navigator.connection.saveData;
+  if (vid && !reduce && !saveData && 'IntersectionObserver' in window) {
+    let loaded = false;
+    const load = () => {
+      const base = matchMedia('(max-width:700px)').matches ? vid.dataset.square : vid.dataset.wide;
+      [['webm', 'video/webm'], ['mp4', 'video/mp4']].forEach(([ext, type]) => { const s = d.createElement('source'); s.src = base + '.' + ext; s.type = type; vid.appendChild(s); });
+      vid.load(); loaded = true;
+      vid.addEventListener('playing', () => vid.classList.add('on'), { once: true });
+    };
+    new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) { if (!loaded) load(); const p = vid.play(); if (p && p.catch) p.catch(() => {}); }
+      else if (loaded) vid.pause();
+    }), { rootMargin: '200px 0px', threshold: 0 }).observe(vid);
+  }
+
+  /* Shop: show wall art in a room (useful on touch screens, where there is no hover) */
+  d.querySelectorAll('[data-rooms]').forEach(b => b.addEventListener('click', () => {
+    const g = d.getElementById(b.dataset.rooms), on = b.getAttribute('aria-pressed') !== 'true';
+    const apply = () => { b.setAttribute('aria-pressed', on); g.classList.toggle('rooms', on); };
+    if (d.startViewTransition && !reduce) d.startViewTransition(apply); else apply();
   }));
 
   /* Year */
