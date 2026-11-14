@@ -132,72 +132,7 @@
     box.innerHTML = ''; box.appendChild(f);
   }));
 
-  /* Studio stage: play the 3D logo while it is on screen.
-     Reduced motion keeps the still. If autoplay is blocked (iOS Low Power Mode), show tap-to-play.
-     Safari/iOS gets H.264 MP4 only — offering WebM first can select it, fail, and never fall back. */
-  const vid = d.querySelector('video.orbit');
-  const stage = vid && vid.closest('.stage-media');
-  const playBtn = stage && stage.querySelector('.orbit-play');
-  const saveData = navigator.connection && navigator.connection.saveData;
-  if (vid && stage && !reduce) {
-    vid.muted = true;
-    vid.defaultMuted = true;
-    vid.playsInline = true;
-    vid.setAttribute('playsinline', '');
-    vid.setAttribute('webkit-playsinline', '');
-    vid.setAttribute('muted', '');
-
-    const ua = navigator.userAgent || '';
-    const apple = /iP(hone|od|ad)/.test(ua) ||
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
-      (/Safari/.test(ua) && !/Chrome|Chromium|Android|CriOS|FxiOS|EdgiOS|OPR|Silk/.test(ua));
-
-    let loaded = false, waiting = false, watch = 0;
-    const showPlay = () => { stage.classList.add('need-play'); if (playBtn) playBtn.hidden = false; };
-    const hidePlay = () => { stage.classList.remove('need-play'); if (playBtn) playBtn.hidden = true; };
-    const onPlaying = () => { clearTimeout(watch); vid.classList.add('on'); hidePlay(); };
-
-    const load = () => {
-      if (loaded) return;
-      const base = matchMedia('(max-width:700px)').matches ? vid.dataset.square : vid.dataset.wide;
-      if (apple) {
-        vid.src = base + '.mp4';
-      } else {
-        [['webm', 'video/webm'], ['mp4', 'video/mp4']].forEach(([ext, type]) => {
-          const s = d.createElement('source'); s.src = base + '.' + ext; s.type = type; vid.appendChild(s);
-        });
-      }
-      vid.load();
-      loaded = true;
-      vid.addEventListener('playing', onPlaying);
-      vid.addEventListener('error', () => showPlay());
-    };
-
-    const tryPlay = () => {
-      load();
-      const go = () => {
-        const p = vid.play();
-        if (p && p.then) p.then(onPlaying).catch(() => showPlay());
-        else if (!vid.paused) onPlaying();
-      };
-      if (vid.readyState >= 2) go();
-      else if (!waiting) {
-        waiting = true;
-        vid.addEventListener('canplay', () => { waiting = false; go(); }, { once: true });
-      }
-      clearTimeout(watch);
-      watch = setTimeout(() => { if (vid.paused && !vid.classList.contains('on')) showPlay(); }, 2500);
-    };
-
-    if (playBtn) playBtn.addEventListener('click', () => { hidePlay(); tryPlay(); });
-    if (saveData) showPlay();
-    else if ('IntersectionObserver' in window) {
-      new IntersectionObserver(es => es.forEach(e => {
-        if (e.isIntersecting) tryPlay();
-        else if (loaded) vid.pause();
-      }), { rootMargin: '200px 0px', threshold: 0 }).observe(stage);
-    } else tryPlay();
-  }
+  /* Studio stage: the 3D logo is an animated WebP in a <picture> (no video, no JS needed). */
 
   /* Shop: show wall art in a room (useful on touch screens, where there is no hover) */
   d.querySelectorAll('[data-rooms]').forEach(b => b.addEventListener('click', () => {
