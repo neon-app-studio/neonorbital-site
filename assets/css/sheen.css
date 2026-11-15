@@ -89,3 +89,7 @@
 @media (max-width:560px){.stat,.stat+.stat{padding:22px 14px 8px 0}.stat:nth-child(even){padding-left:16px}.stat .big{margin-bottom:14px}.stat p{font-size:.9rem}.spec{grid-template-columns:1fr}}
 @media (max-width:340px){.stats{grid-template-columns:1fr}.stat,.stat+.stat,.stat:nth-child(even){padding:22px 0 6px;border-left:0}.stat:nth-child(n+2){border-top:1px solid var(--line)}}
 @media (prefers-reduced-motion:reduce){.js .coin{opacity:1;transform:none}.vest .col i{transform:none!important}.glint{display:none}}
+
+/* Phase 7: keep the address label legible and avoid subpixel target shrink. */
+.sh-addr .lbl{font-size:.75rem}
+.icon-btn{min-height:45px;flex-shrink:0}

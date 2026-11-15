@@ -3,6 +3,7 @@
   const d = document, root = d.documentElement;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   window.NO_JS_OK = 1; // tells the head failsafe that this script ran
+  d.addEventListener('touchstart', () => {}, { passive: true }); // lets iOS Safari show :active press states
 
   /* Header: solid after scroll, hides on scroll down, returns on scroll up */
   const hdr = d.querySelector('.hdr');
@@ -10,26 +11,40 @@
   const onScroll = () => {
     const y = scrollY;
     hdr.classList.toggle('scrolled', y > 8);
-    if (!d.body.classList.contains('menu-open')) hdr.classList.toggle('hide', y > 220 && y > lastY + 4);
+    if (!d.body.classList.contains('menu-open') && !hdr.contains(d.activeElement)) hdr.classList.toggle('hide', y > 220 && y > lastY + 4);
     if (y < lastY - 4) hdr.classList.remove('hide');
     lastY = y; ticking = false;
   };
   addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
   onScroll();
 
-  /* Mobile menu */
+  /* Phone menu (Phase 5): focus moves in on open, Tab is trapped between the close button and the menu,
+     Esc or a link closes it and focus goes back to the button; the rest of the page is inert while open */
   const mb = d.querySelector('.menu-btn'), mnav = d.querySelector('.mnav');
-  const setMenu = open => {
+  const behind = [d.querySelector('main'), d.querySelector('.ftr'), d.querySelector('.skip'), d.querySelector('.hdr .brand'), d.querySelector('.hdr .nav')].filter(Boolean);
+  const isOpen = () => d.body.classList.contains('menu-open');
+  const setMenu = (open, back) => {
     d.body.classList.toggle('menu-open', open);
     mb.setAttribute('aria-expanded', open);
+    mb.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     mnav.toggleAttribute('inert', !open);
-    if (open) hdr.classList.remove('hide');
+    behind.forEach(el => el.toggleAttribute('inert', open));
+    if (open) { hdr.classList.remove('hide'); const first = mnav.querySelector('a[aria-current=page]') || mnav.querySelector('a'); setTimeout(() => first && first.focus({ preventScroll: true }), reduce ? 0 : 60); }
+    else if (back) mb.focus({ preventScroll: true });
   };
   if (mb) {
     mnav.setAttribute('inert', '');
-    mb.addEventListener('click', () => setMenu(!d.body.classList.contains('menu-open')));
-    addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+    mb.addEventListener('click', () => setMenu(!isOpen(), true));
+    addEventListener('keydown', e => {
+      if (!isOpen()) return;
+      if (e.key === 'Escape') { e.preventDefault(); setMenu(false, true); return; }
+      if (e.key !== 'Tab') return;
+      const f = [mb, ...mnav.querySelectorAll('a')]; const i = f.indexOf(d.activeElement);
+      if (e.shiftKey && (i <= 0)) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && (i === f.length - 1 || i === -1)) { e.preventDefault(); f[0].focus(); }
+    });
     mnav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+    matchMedia('(min-width:901px)').addEventListener('change', e => { if (e.matches && isOpen()) setMenu(false); });
   }
 
   /* Split headings into line masks */
@@ -77,6 +92,11 @@
     const loop = () => { clearTimeout(timer); if (paused || reduce) return; timer = setTimeout(() => { step++; show(step); loop(); }, DUR); };
     // Preload the next images only after first paint
     addEventListener('load', () => setTimeout(() => wall.querySelectorAll('img[data-src]').forEach(i => { i.src = i.dataset.src; if (i.dataset.srcset) i.srcset = i.dataset.srcset; }), 600));
+    // Phones: panels 2 and 3 sit off to the side, so their first image loads right after the page has painted
+    const side = () => wall.querySelectorAll('source[data-srcset]').forEach(s => { s.srcset = s.dataset.srcset; s.removeAttribute('data-srcset'); });
+    const later = () => setTimeout(side, 600);
+    if (d.readyState === 'complete') later(); else addEventListener('load', later);
+    wall.addEventListener('scroll', side, { passive: true, once: true });
     show(0); loop();
     d.addEventListener('visibilitychange', () => { paused = d.hidden; loop(); });
     wall.addEventListener('mouseenter', () => { paused = true; clearTimeout(timer); });
@@ -141,10 +161,15 @@
       if (orbit.dataset.on) return; orbit.dataset.on = 1;
       orbit.parentNode.querySelectorAll('[data-anim]').forEach(el => { if (el.tagName === 'SOURCE') el.srcset = el.dataset.anim; else el.src = el.dataset.anim; });
     };
-    if ('IntersectionObserver' in window) {
-      const oio = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { oio.disconnect(); swap(); } }, { rootMargin: '300px 0px' });
-      oio.observe(orbit.closest('.stage-media') || orbit);
-    } else swap();
+    // Start watching only after the page has loaded, so the large animation never competes with the first paint
+    const watch = () => {
+      if ('IntersectionObserver' in window) {
+        const oio = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { oio.disconnect(); swap(); } }, { rootMargin: '300px 0px' });
+        oio.observe(orbit.closest('.stage-media') || orbit);
+      } else swap();
+    };
+    const later2 = () => setTimeout(watch, 600);
+    if (d.readyState === 'complete') later2(); else addEventListener('load', later2);
   }
 
   /* Shop: show wall art in a room (useful on touch screens, where there is no hover) */
@@ -156,4 +181,31 @@
 
   /* Year */
   d.querySelectorAll('[data-year]').forEach(e => e.textContent = new Date().getFullYear());
+})();
+
+/* Release (Nov 15, 2026): signature orbit. The moon follows the pointer, can be dragged, and orbits once on first view. */
+(() => {
+  const sig = document.querySelector('.sig'); if (!sig) return;
+  const moon = sig.querySelector('.sig-moon'), REST = -60;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let a = REST, dragging = false;
+  const set = v => { a = v; moon.style.setProperty('--a', v + 'deg'); };
+  const angleAt = e => { const r = sig.getBoundingClientRect(); return Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180 / Math.PI; };
+  const toward = t => { let d = ((t - a) % 360 + 540) % 360 - 180; set(a + d); }; // shortest way round, no backwards jumps
+  // one slow orbit the first time the footer comes into view
+  if (!reduce && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => { if (es.some(x => x.isIntersecting)) { io.disconnect(); sig.classList.add('spin'); set(a + 360); setTimeout(() => sig.classList.remove('spin'), 1900); } }, { threshold: .6 });
+    io.observe(sig);
+  }
+  // fine pointers: the moon turns toward the pointer anywhere in the footer, and goes home when it leaves
+  const ftr = sig.closest('footer');
+  if (!reduce && matchMedia('(hover: hover) and (pointer: fine)').matches && ftr) {
+    ftr.addEventListener('pointermove', e => { if (dragging || sig.classList.contains('spin')) return; sig.classList.add('follow'); toward(angleAt(e)); }, { passive: true });
+    ftr.addEventListener('pointerleave', () => { sig.classList.remove('follow'); toward(REST); });
+  }
+  // touch and mouse: drag the moon round the ring; it stays where you leave it
+  sig.addEventListener('pointerdown', e => { dragging = true; sig.classList.add('drag'); sig.setPointerCapture(e.pointerId); toward(angleAt(e)); });
+  sig.addEventListener('pointermove', e => { if (dragging) toward(angleAt(e)); });
+  const end = () => { dragging = false; sig.classList.remove('drag'); };
+  sig.addEventListener('pointerup', end); sig.addEventListener('pointercancel', end);
 })();
