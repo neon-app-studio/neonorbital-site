@@ -30,7 +30,7 @@
   --dur-1:160ms; --dur-2:350ms; --dur-3:700ms; --dur-4:1400ms;
 }
 *,*::before,*::after{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:90px}
+html{--hdr-h:76px;-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:calc(var(--hdr-h) + 14px)}
 body{margin:0;background:var(--paper);color:var(--ink);font:400 1.0625rem/1.65 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 img{display:block;max-width:100%;height:auto}
 a{color:inherit;text-decoration:none}
@@ -68,10 +68,10 @@ em,.it{font-style:italic;font-weight:330}
 
 /* Header */
 .hdr{position:sticky;top:0;z-index:50;transition:transform .5s var(--ease),background-color .4s,box-shadow .4s}
-.hdr::before{content:"";position:absolute;inset:0;background:rgba(244,240,232,.82);-webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px);opacity:0;transition:opacity .4s;border-bottom:1px solid var(--line)}
+.hdr::before{content:"";position:absolute;inset:0;background:var(--paper);-webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px);opacity:0;transition:opacity .4s;border-bottom:1px solid var(--line)}
 .hdr.scrolled::before{opacity:1}
 .hdr.hide{transform:translateY(-100%)}
-.hdr .wrap{position:relative;display:flex;align-items:center;justify-content:space-between;height:76px}
+.hdr .wrap{position:relative;display:flex;align-items:center;justify-content:space-between;height:var(--hdr-h)}
 .brand{display:inline-flex;align-items:center;flex-shrink:1;min-width:44px;min-height:44px;max-width:min(280px,calc(100% - 52px))}
 .brand-logo{display:block;height:42px;width:auto;max-width:100%}
 @media (min-width:901px){.brand-logo{height:46px}}
@@ -816,3 +816,16 @@ p.lead a.link{ text-decoration:underline;text-underline-offset:.18em;text-decora
 @media (max-width:700px){#shopgrid .card,#shopgrid .card.trio{grid-column:span 1}
  #shopgrid .card.sheet,#shopgrid .card.feat,#shopgrid .card.feat.r,#shopgrid .card.sheet.feat,#shopgrid .card.trio.lead{grid-column:span 2}
  #shopgrid .card.feat .media,#shopgrid .card.trio.lead .media{aspect-ratio:3/4}#shopgrid .card.sheet.feat .media{aspect-ratio:6/5}}
+
+/* Nov 15 fix: header is a solid cream bar once scrolled (content no longer shows through it when it slides back in on scroll-up); anchor targets clear it via scroll-padding-top tied to --hdr-h */
+/* Nov 15 fix: the four discipline cards share one frame: cream mat, same padding, same radius, each picture inset in a .pic with the same edge and shadow */
+.pillars.disc .disc-item .media{position:relative;display:grid;grid-template:minmax(0,1fr)/minmax(0,1fr);place-items:stretch;aspect-ratio:4/5;min-height:0;width:100%;padding:clamp(10px,1.5vw,18px);background:var(--paper-2);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.pillars.disc .disc-item .pic{position:relative;display:block;width:100%;height:100%;min-height:0;overflow:hidden;border-radius:var(--r-sm);box-shadow:0 0 0 1px var(--line),0 18px 30px -20px rgba(28,27,24,.45);background:var(--paper-3)}
+.pillars.disc .disc-item .pic img{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;object-position:50% 50%;border-radius:0;box-shadow:none;animation:none}
+.pillars.disc .disc-item .phone-media .pic{width:auto;height:100%;aspect-ratio:600/1304;justify-self:center}
+.pillars.disc .disc-item .phone-media .pic img{object-fit:cover;object-position:50% 0}
+.pillars.disc .disc-item .cover-media .pic{height:auto;aspect-ratio:1;align-self:center}
+.pillars.disc .disc-item .sheet-crop .pic img{transform-origin:50% 100%;transform:scale(1.18)}
+.pillars.disc .disc-item:hover .phone-media img{transform:scale(1.03)}
+.pillars.disc .disc-item:hover .sheet-crop img{transform:scale(1.23)}
+@media (prefers-reduced-motion:reduce){.pillars.disc .disc-item:hover .media img{transform:none!important}.pillars.disc .disc-item .sheet-crop .pic img{transform:scale(1.18)!important}}
