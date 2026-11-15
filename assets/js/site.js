@@ -186,7 +186,7 @@
 /* Release (Nov 15, 2026): signature orbit. The moon follows the pointer, can be dragged, and orbits once on first view. */
 (() => {
   const sig = document.querySelector('.sig'); if (!sig) return;
-  const moon = sig.querySelector('.sig-moon'), REST = -60;
+  const moon = sig.querySelector('.sig-moon'), REST = -60; if (!moon) return; // Nov 15: footer now shows the full logo, which has no movable moon
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let a = REST, dragging = false;
   const set = v => { a = v; moon.style.setProperty('--a', v + 'deg'); };
