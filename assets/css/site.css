@@ -836,3 +836,11 @@ p.lead a.link{ text-decoration:underline;text-underline-offset:.18em;text-decora
 /* Nov 15 (3): footer mark is the full logo symbol (serif N in the open ring, moon, stars) from the brand files; same box, no drag/orbit (the moon belongs in the ring's opening) */
 .sig{touch-action:auto;cursor:default}
 .sig-logo{display:block;width:100%;height:100%}
+
+
+/* Nov 16 fix: the standalone hero marks and cover placeholders show the full logo symbol (N in the ring), never an empty ring */
+.hero-mark .logo-mark{display:block;width:100%;height:100%}
+/* Same ring size as before: the symbol's ring is 68% of its box (glow padding), the old ring was 90%, so the box grows and shifts to keep the same center */
+.top-mark{width:53px;right:-6px;top:-2px}
+.meta-mark{width:45px}
+.built-row .ph .logo-mark{display:block;width:45px;height:45px}
