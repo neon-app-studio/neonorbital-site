@@ -152,6 +152,14 @@
 .ep-rail:focus-visible{outline:2px solid var(--brass);outline-offset:-2px;border-radius:var(--r)}
 .ep-rail-wrap{max-width:calc(var(--max) + var(--gut)*2);margin:0 auto}
 
+/* Marketing screenshot card (full App Store frame; already contains a phone or a typographic layout, so no CSS bezel) */
+.ep-shot{--w:280px;position:relative;width:var(--w);flex:none;margin:0}
+.ep-shot img{width:100%;height:auto;display:block;aspect-ratio:1290/2796;object-fit:cover;border-radius:calc(var(--w)*.08);box-shadow:0 0 0 1px rgba(28,27,24,.08),0 24px 50px -18px rgba(0,0,0,.45);background:#f0e8df}
+.ep-rail .ep-shot{--w:clamp(210px,19vw,262px)}
+.ep-rail .ep-shot figcaption,.ep-shot figcaption{margin-top:16px;font-size:.9rem;color:var(--muted);text-align:center;max-width:var(--w)}
+.ep-full .ep-shot{--w:clamp(220px,21vw,290px);margin:0 auto}
+.ep-full .ep-shot img{box-shadow:0 0 0 1px rgba(255,255,255,.08),0 30px 60px -20px rgba(0,0,0,.55)}
+
 /* Full Version */
 .ep-full{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:clamp(28px,5vw,80px);align-items:center;border-radius:calc(var(--r) + 6px);padding:clamp(36px,6vw,88px);position:relative;isolation:isolate;overflow:hidden}
 .ep-price{display:flex;align-items:flex-end;gap:16px;margin:26px 0 8px}
@@ -198,7 +206,7 @@
   .ep-card p{font-size:.86rem;line-height:1.5}
   .ep-card.feat{padding:20px 18px}
   .ep-rail li:nth-child(even){margin-top:0}
-  .ep-rail .ep-phone{--w:62vw}
+  .ep-rail .ep-phone,.ep-rail .ep-shot{--w:62vw}
   .ep-years{font-size:1.05rem}
   .ep-badge img{height:50px}
 }
