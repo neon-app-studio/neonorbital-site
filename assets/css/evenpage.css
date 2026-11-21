@@ -64,15 +64,15 @@
 .ep-panel h1,.ep-panel h2{margin-top:22px;max-width:13ch}
 .ep-panel h1{font-size:clamp(2.6rem,1.2rem + 4.4vw,5.4rem)}
 .ep-panel .lead{margin:1.3rem 0 0;max-width:38ch}
-.ep-stage{position:relative;height:clamp(420px,46vw,640px);perspective:1400px}
+.ep-stage{position:relative;height:clamp(500px,54vw,740px);perspective:1400px}
 .ep-trio{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .8s var(--ease)}
 .ep-trio .ep-slot{position:absolute;left:50%;top:50%}
 .ep-trio .c{z-index:3;translate:-50% -50%}
-.ep-trio .c>.ep-phone{--w:clamp(196px,19vw,272px)}
+.ep-trio .c>.ep-phone{--w:clamp(232px,22.8vw,326px)}
 .ep-trio .l,.ep-trio .r{z-index:2;filter:saturate(.9) brightness(.82)}
-.ep-trio .l>.ep-phone,.ep-trio .r>.ep-phone{--w:clamp(160px,15.5vw,224px)}
-.ep-trio .l{translate:-118% -44%;rotate:-8deg}
-.ep-trio .r{translate:18% -56%;rotate:8deg}
+.ep-trio .l>.ep-phone,.ep-trio .r>.ep-phone{--w:clamp(184px,17.8vw,258px)}
+.ep-trio .l{translate:-100% -44%;rotate:-8deg}
+.ep-trio .r{translate:6% -56%;rotate:8deg}
 .ep-glow{position:absolute;left:50%;top:52%;width:80%;aspect-ratio:1;translate:-50% -50%;border-radius:50%;background:radial-gradient(closest-side,rgba(224,138,85,.42),rgba(224,138,85,0));z-index:0;filter:blur(8px)}
 
 /* Load-in fan (CSS only; ends at the resting state above) */
@@ -192,11 +192,11 @@
 @media (max-width:900px){
   .ep-panel{grid-template-columns:1fr;padding:40px 22px 0}
   .ep-panel h1,.ep-panel h2{max-width:14ch}
-  .ep-stage{height:clamp(380px,112vw,560px);margin:0 -22px}
-  .ep-trio .c>.ep-phone{--w:clamp(180px,48vw,250px)}
-  .ep-trio .l>.ep-phone,.ep-trio .r>.ep-phone{--w:clamp(140px,38vw,200px)}
-  .ep-trio .l{translate:-112% -44%}
-  .ep-trio .r{translate:12% -56%}
+  .ep-stage{height:clamp(440px,132vw,660px);margin:0 -22px}
+  .ep-trio .c>.ep-phone{--w:clamp(206px,56vw,290px)}
+  .ep-trio .l>.ep-phone,.ep-trio .r>.ep-phone{--w:clamp(160px,44vw,230px)}
+  .ep-trio .l{translate:-104% -44%}
+  .ep-trio .r{translate:4% -56%}
   .ep-story{grid-template-columns:1fr}
   .ep-sticky{display:none}
   .ep-step{min-height:0;padding:40px 0;border-top:1px solid var(--line)}
