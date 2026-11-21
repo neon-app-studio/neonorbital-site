@@ -89,14 +89,22 @@
       if (counterNum) counterNum.textContent = String((s % total) + 1).padStart(2, '0');
       if (bar && !reduce) { bar.classList.remove('run'); void bar.offsetWidth; bar.style.setProperty('--dur', DUR + 'ms'); bar.classList.add('run'); }
     };
-    const loop = () => { clearTimeout(timer); if (paused || reduce) return; timer = setTimeout(() => { step++; show(step); loop(); }, DUR); };
-    // Preload the next images only after first paint
-    addEventListener('load', () => setTimeout(() => wall.querySelectorAll('img[data-src]').forEach(i => { i.src = i.dataset.src; if (i.dataset.srcset) i.srcset = i.dataset.srcset; }), 600));
-    // Phones: panels 2 and 3 sit off to the side, so their first image loads right after the page has painted
-    const side = () => wall.querySelectorAll('source[data-srcset]').forEach(s => { s.srcset = s.dataset.srcset; s.removeAttribute('data-srcset'); });
-    const later = () => setTimeout(side, 600);
+    const loadFig = fig => {
+      fig.querySelectorAll('source[data-srcset]').forEach(s => { s.srcset = s.dataset.srcset; s.removeAttribute('data-srcset'); });
+      fig.querySelectorAll('img[data-src]').forEach(i => {
+        if (i.dataset.srcset) { i.srcset = i.dataset.srcset; i.removeAttribute('data-srcset'); }
+        i.src = i.dataset.src; i.removeAttribute('data-src');
+      });
+    };
+    const preloadStep = s => panels.forEach(panel => {
+      const figs = panel.querySelectorAll('figure');
+      loadFig(figs[s % figs.length]);
+    });
+    const loop = () => { clearTimeout(timer); if (paused || reduce) return; timer = setTimeout(() => { step++; show(step); preloadStep(step + 1); loop(); }, DUR); };
+    // After first paint: first frame of each panel (desktop row + phone peek) and the next frame for the crossfade. Later frames wait their turn.
+    const later = () => { setTimeout(() => preloadStep(0), 600); setTimeout(() => preloadStep(1), 2000); };
     if (d.readyState === 'complete') later(); else addEventListener('load', later);
-    wall.addEventListener('scroll', side, { passive: true, once: true });
+    wall.addEventListener('scroll', () => preloadStep(0), { passive: true, once: true });
     show(0); loop();
     d.addEventListener('visibilitychange', () => { paused = d.hidden; loop(); });
     wall.addEventListener('mouseenter', () => { paused = true; clearTimeout(timer); });
@@ -164,7 +172,7 @@
     // Start watching only after the page has loaded, so the large animation never competes with the first paint
     const watch = () => {
       if ('IntersectionObserver' in window) {
-        const oio = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { oio.disconnect(); swap(); } }, { rootMargin: '300px 0px' });
+        const oio = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { oio.disconnect(); swap(); } }, { rootMargin: '80px 0px' });
         oio.observe(orbit.closest('.stage-media') || orbit);
       } else swap();
     };

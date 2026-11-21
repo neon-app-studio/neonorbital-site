@@ -857,3 +857,14 @@ p.lead a.link{ text-decoration:underline;text-underline-offset:.18em;text-decora
 .top-mark{width:53px;right:-6px;top:-2px}
 .meta-mark{width:45px}
 .built-row .ph .logo-mark{display:block;width:45px;height:45px}
+
+/* Nov 21: homepage — shipped work leads; coming-soon sits quietly lower on the page */
+.soon-sec{padding-top:clamp(36px,5vw,72px);padding-bottom:clamp(36px,5vw,72px)}
+.soon-sec .sec-head{margin-bottom:0}
+.soon-sec .sec-head h2{font-size:clamp(1.6rem,1.3rem + 1vw,2.2rem);max-width:16ch}
+.soon-quiet{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:0 48px;border-top:1px solid var(--line)}
+.soon-quiet li{padding:16px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.soon-quiet b{font:400 1.08rem/1.25 var(--serif);color:var(--ink-2);letter-spacing:-.01em}
+.soon-quiet small{color:var(--muted);font-size:.88rem;line-height:1.45;max-width:48ch}
+.soon-quiet .soon-k{font:500 .72rem/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+@media (max-width:700px){.soon-quiet{grid-template-columns:1fr;gap:0}}
