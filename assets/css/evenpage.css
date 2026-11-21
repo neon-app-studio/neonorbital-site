@@ -50,6 +50,12 @@
 /* ---------- Chips ---------- */
 .ep-chips{list-style:none;padding:0;margin:22px 0 4px;display:flex;flex-wrap:wrap;gap:8px}
 .ep-chips li{font:500 .82rem/1 var(--sans);padding:.65em .95em;border-radius:999px;border:1px solid var(--ep-line);background:rgba(246,239,228,.05);color:var(--ep-cream)}
+.ep-key{list-style:none;padding:0;margin:26px 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:560px}
+.ep-key li{position:relative;padding:18px 18px 17px;border-radius:var(--r);border:1px solid rgba(224,138,85,.34);background:linear-gradient(160deg,rgba(224,138,85,.16),rgba(246,239,228,.03) 70%)}
+.ep-key svg{display:block;width:26px;height:26px;color:var(--ep-sun);margin-bottom:12px}
+.ep-key b{display:block;font:500 clamp(1.25rem,1.05rem + .5vw,1.5rem)/1.1 var(--serif);color:var(--ep-cream);letter-spacing:-.01em;margin-bottom:6px}
+.ep-key span{display:block;font-size:.88rem;line-height:1.5;color:var(--ep-cream-2)}
+.ep-key+.ep-chips{margin-top:14px}
 .ep-fine{font-size:.85rem!important;color:var(--ep-cream-2)!important;margin:6px 0 0!important}
 .ep-fine b{color:var(--ep-cream);font-weight:600}
 
@@ -199,6 +205,8 @@
   .ep-full ul{grid-template-columns:1fr}
 }
 @media (max-width:560px){
+  .ep-key{grid-template-columns:1fr;gap:10px}
+  .ep-key li{padding:16px 16px 15px}
   .ep-grid{gap:10px}
   .ep-card{padding:16px 14px}
   .ep-card svg{width:24px;height:24px;margin-bottom:12px}
@@ -214,4 +222,4 @@
   .ep-trio,.ep-card,.ep-badge,.ep-sticky .scr img{transition:none!important}
   .ep-px,.ep-scale{animation:none!important;transform:none!important}
 }
-@media (forced-colors:active){.ep-chips li,.ep-a11y li,.ep-card{border:1px solid CanvasText}}
+@media (forced-colors:active){.ep-key li,.ep-chips li,.ep-a11y li,.ep-card{border:1px solid CanvasText}}
