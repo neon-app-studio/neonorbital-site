@@ -1,0 +1,51 @@
+/* Neon Orbital orrery hero */
+.orr{height:240vh;position:relative;margin-top:calc(-1 * var(--hdr-h,64px))}
+.orr-pin{position:sticky;top:0;height:100svh;display:grid;grid-template-rows:auto auto auto;align-content:space-evenly;padding:calc(var(--hdr-h,64px) + 4px) var(--gut) 12px;max-width:var(--max,1320px);margin:0 auto}
+.orr-eb{font:500 .66rem/1.2 var(--serif);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);display:flex;align-items:center;gap:12px;margin:0}
+.orr-eb::before{content:"";width:28px;height:1px;background:#a9864c}
+.orr h1{font:400 clamp(1.9rem,1.1rem + 3.4vw,4.1rem)/1.05 var(--serif);letter-spacing:-.022em;margin:12px 0 0;max-width:15ch;text-wrap:balance}
+.orr h1 em{font-style:italic;color:#7a5a2c}
+.orr-lead{display:none}
+.orr svg.o{width:calc(100% + 2*var(--gut) - 8px);margin:0 calc(4px - var(--gut));height:auto;overflow:visible;display:block}
+.o *{vector-effect:non-scaling-stroke}
+.o .h{stroke:var(--ink);stroke-width:.7;fill:none}
+.o .t{stroke:var(--ink);stroke-width:.55;fill:none;opacity:.62}
+.o .f{stroke:var(--ink);stroke-width:.45;fill:none}
+.o .d{stroke:var(--ink);stroke-width:.5;fill:none;stroke-dasharray:1 4;opacity:.45}
+.o .bl{stroke:#8f6d37;stroke-width:1.1;fill:none;stroke-linecap:round}
+.o .ry{stroke:#9a7840;stroke-width:.6;fill:none}
+.o .bs{fill:url(#orr-brg);stroke:var(--ink);stroke-width:.6}
+.o .bm{fill:#bb9a5f;stroke:var(--ink);stroke-width:.6}
+.o .iv{fill:#f8f2e4;stroke:var(--ink);stroke-width:.75}
+.o .pp{fill:var(--paper);stroke:none}
+.o .hb{fill:url(#orr-ht);stroke:none}
+.o text{fill:var(--ink);font-family:var(--serif)}
+.o .lb{font-size:17px;font-weight:500;letter-spacing:.09em;transition:transform .5s cubic-bezier(.65,0,.35,1)}
+.o .lb .hl{fill:var(--paper);stroke:var(--paper);stroke-width:8px;stroke-linejoin:round;vector-effect:none}
+.o .lb .s{font-size:.76em}
+.o .lb .cn{font-style:italic;font-weight:400;letter-spacing:0}
+.o .nu{font-size:10.5px;font-style:italic;fill:#5a4a2c}
+.o .b{cursor:pointer}
+.o .rt{opacity:0;transition:opacity .25s}
+.o .b.on .rt{opacity:1}
+.o .hit{fill:transparent;stroke:none}
+.orr-cap{font:italic 400 .76rem/1.4 var(--serif);color:var(--muted);text-align:center;margin:6px 0 0}
+.orr-idx{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid #a9864c;border-bottom:1px solid #a9864c;list-style:none;padding:0;margin:8px 0 0}
+.orr-idx li+li{border-left:1px solid rgba(169,134,76,.4)}
+.orr-idx a{display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 2px 8px;text-decoration:none;color:var(--ink);min-width:44px}
+.orr-idx b{font:italic 400 1.12rem/1 var(--serif);display:flex;align-items:center;gap:5px}
+.orr-idx b i{width:7px;height:7px;border-radius:50%;border:.5px solid var(--ink)}
+.orr-idx small{font:500 .56rem/1.1 var(--serif);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-2);text-align:center}
+.orr-idx a.on b,.orr-idx a:hover b{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
+.orr-idx a:focus-visible{outline:1px solid var(--ink);outline-offset:-3px}
+#built-h,#music-h,#gal-h,#sheen-home-h{scroll-margin-top:calc(var(--hdr-h,64px) + 24px)}
+@supports (animation-timeline:view()){@media (prefers-reduced-motion:no-preference){.orr-lede{animation:orr-lift linear both;animation-timeline:view();animation-range:exit 0% exit 70%}}}
+@keyframes orr-lift{to{opacity:0;transform:translateY(-24px)}}
+@media (prefers-reduced-motion:reduce){.o .lb{transition:none}}
+@media (min-width:900px){
+ .orr-pin{grid-template-columns:minmax(0,5fr) minmax(0,7fr);grid-template-rows:1fr auto;column-gap:32px;align-items:center}
+ .orr h1{font-size:clamp(2.6rem,1rem + 3.2vw,4.2rem);max-width:14ch}
+ .orr-lead{display:block;max-width:34ch;color:var(--ink-2);margin:18px 0 0;font-size:var(--t-lead,1.1rem);line-height:1.55}
+ .orr-lede,.orr-plate{grid-row:1}.orr svg.o{width:112%;margin:0 -10% 0 -2%;max-height:74svh}
+ .orr-idx{grid-column:1/-1}.orr-idx b{font-size:1.6rem}.orr-idx small{font-size:.66rem}.orr-idx a{padding:13px 4px 12px;gap:8px}
+ .o .lb{font-size:13px}.o .lb .hl{stroke-width:6px}.o .nu{font-size:8.5px}}
