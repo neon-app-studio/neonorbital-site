@@ -77,12 +77,17 @@ function draw(p){
   for(const q of order){const[dx,dy]=c[q],l=b.X+dx-w/2,t=b.Y+dy-hh*.8,bx=[l,t,l+w,t+hh];let s=0;for(const z of boxes){const ox=Math.min(bx[2],z[2])-Math.max(bx[0],z[0]),oy=Math.min(bx[3],z[3])-Math.max(bx[1],z[1]);if(ox>0&&oy>0)s+=ox*oy}if(s<bs-40){bs=s;best=q}if(!s)break}
   b.k=best;const[dx,dy]=c[best],l=b.X+dx-w/2,t=b.Y+dy-hh*.8;boxes.push([l,t,l+w,t+hh]);b.t.style.transform=`translate(${f(dx)}px,${f(dy)}px)`})
 }
-const H=document.getElementById("orr-hero");let cur=0,tgt=0,last=0,raf=0;
+const H=document.getElementById("orr-hero");let cur=0,tgt=0,last=0,raf=0,idle=0,seen=1;
+/* idle drift: about one inner orbit per 80 s, one drive-wheel turn per 110 s; scroll adds on top */
 const prog=()=>{const r=H.getBoundingClientRect(),span=H.offsetHeight-innerHeight;return Math.min(1,Math.max(0,-r.top/span))+Math.max(0,(-r.top-span)/innerHeight)*.25};
-function tick(t){const dt=Math.min(.05,(t-last)/1000||.016);last=t;cur+=(tgt-cur)*(1-Math.exp(-dt*5));draw(cur);raf=Math.abs(tgt-cur)>1e-5?requestAnimationFrame(tick):0}
-function onS(){if(window.__cap)return;tgt=RM.matches?0:prog();if(!raf){last=performance.now();raf=requestAnimationFrame(tick)}}
-addEventListener("scroll",onS,{passive:true});RM.addEventListener("change",onS);
-window.__render=p=>{cur=tgt=p;draw(p)};window.__prog=prog;draw(0);onS();
+const DRIFT=.01,live=()=>!RM.matches&&seen&&!document.hidden;
+function tick(t){const dt=Math.min(.05,(t-last)/1000||.016);last=t;if(live())idle+=dt*DRIFT;cur+=(tgt-cur)*(1-Math.exp(-dt*5));draw(cur+idle);raf=live()||Math.abs(tgt-cur)>1e-5?requestAnimationFrame(tick):0}
+function kick(){if(!raf){last=performance.now();raf=requestAnimationFrame(tick)}}
+function onS(){if(window.__cap)return;tgt=RM.matches?0:prog();kick()}
+addEventListener("scroll",onS,{passive:true});RM.addEventListener("change",()=>{if(RM.matches)idle=0;onS()});
+document.addEventListener("visibilitychange",kick);
+if("IntersectionObserver"in window)new IntersectionObserver(e=>{seen=e[0].isIntersecting;kick()}).observe(o);
+window.__render=p=>{cur=tgt=p;idle=0;draw(p)};window.__idle=()=>idle;window.__prog=prog;draw(0);onS();
 const L=[...document.querySelectorAll("#orr-idx a")],hl=(i,on)=>{R[i].g.classList.toggle("on",on);L[i].classList.toggle("on",on)};
 R.forEach((b,i)=>{b.g.addEventListener("click",()=>{const h=b.id;if(h[0]=="#"){const t=document.querySelector(h);t&&t.scrollIntoView({behavior:RM.matches?"auto":"smooth"})}else location.href=h});b.g.addEventListener("pointerenter",()=>hl(i,1));b.g.addEventListener("pointerleave",()=>hl(i,0))});
 L.forEach((a,i)=>{["focus","pointerenter"].forEach(e=>a.addEventListener(e,()=>hl(i,1)));["blur","pointerleave"].forEach(e=>a.addEventListener(e,()=>hl(i,0)))});
