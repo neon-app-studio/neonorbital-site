@@ -190,7 +190,7 @@
 .ep-dirs-label{margin:0;font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .ep-dirs-row{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:14px}
 .ep-dirs-row a{display:inline-block;line-height:0;border-radius:10px}
-.ep-dirs-row a img{display:block;width:220px;height:56px}
+.ep-dirs-row a img{display:block;width:auto;height:56px}
 .ep-dirs-row a:focus-visible{outline:2px solid var(--brass);outline-offset:4px}
 
 /* ---------- Responsive ---------- */
